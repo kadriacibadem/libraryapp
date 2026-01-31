@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface AuthorService {
     Author save(Author author);
     Author update(Author author);
+    Author update(Author author, BookRequestDto bookRequestDto,Book book);
     void delete(Author author);
     Author createAuthor(BookRequestDto bookRequestDto, Book book);
     Optional<Author> findByAuthorNameSurname(String authorNameSurname);

@@ -35,6 +35,15 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public Author update(Author author, BookRequestDto bookRequestDto,Book book) {
+        Author existingAuthor = repo.findByAuthorNameSurname(bookRequestDto.getAuthorNameSurname());
+        if (existingAuthor == null) {
+            return this.createAuthor(bookRequestDto,book);
+        }
+        return existingAuthor;
+    }
+
+    @Override
     public void delete(Author author) {
         Optional<Author> existingAuthor = repo.findById(author.getAuthorId());
         if (existingAuthor.isPresent()) {

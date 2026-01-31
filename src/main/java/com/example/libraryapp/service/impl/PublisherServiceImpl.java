@@ -35,6 +35,15 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
+    public Publisher update(Publisher publisher, BookRequestDto bookRequestDto) {
+        Publisher existingPublisher = repo.findByPublisherName(bookRequestDto.getPublisherName());
+        if (existingPublisher == null) {
+            return this.createPublisher(bookRequestDto);
+        }
+        return existingPublisher;
+    }
+
+    @Override
     public void delete(Publisher publisher) {
         Optional<Publisher> existingPublisher = repo.findById(publisher.getPublisherId());
         if (existingPublisher.isPresent()) {
@@ -63,5 +72,11 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public List<Publisher> findAll() {
         return repo.findAll();
+    }
+
+    @Override
+    public Publisher findById(Long id) {
+        return repo.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("Publisher with ID " + id + " does not exist."));
     }
 }

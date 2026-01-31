@@ -21,7 +21,7 @@ public class Publisher {
     @Column(name = "publisher_name")
     private String publisherName;
 
-    @OneToMany(mappedBy = "publisher", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "publisher", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private List<Book> books = new ArrayList<>();
 
     @Override

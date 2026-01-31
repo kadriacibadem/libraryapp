@@ -51,6 +51,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Book findByTitle(String title) {
+        Book book = repo.findByTitle(title);
+        if(book == null){
+            throw new IllegalArgumentException("Book with title " + title + " does not exist.");
+        }
+        return book;
+    }
+
+    @Override
     public List<Book> findAll() {
         List<Book> allBook = repo.findAll();
         if(allBook.isEmpty()){
@@ -66,7 +75,7 @@ public class BookServiceImpl implements BookService {
         book.setTitle(bookRequestDto.getTitle());
         book.setPrice(bookRequestDto.getPrice());
         book.setPublisher(publisher);
-        book.setISBN13(bookRequestDto.getISBN13());
+        book.setISBN13(bookRequestDto.getIsbn13());
         Author author = authorService.createAuthor(bookRequestDto,book);
         book.setAuthor(author);
         return repo.save(book);
@@ -78,5 +87,35 @@ public class BookServiceImpl implements BookService {
                 .filter(
                         book -> book.getTitle().toUpperCase().startsWith("A")
                 ).toList();
+    }
+
+    @Override
+    public Book updateBook(BookRequestDto bookRequestDto) {
+        Book book = repo.findByISBN13(bookRequestDto.getIsbn13());
+        if(book == null){
+            throw new IllegalArgumentException("Book with ISBN13 " + bookRequestDto.getIsbn13() + " does not exist.");
+        }
+        book.setTitle(bookRequestDto.getTitle());
+        Publisher publisher = publisherService.update(book.getPublisher(), bookRequestDto);
+        book.setPublisher(publisher);
+        Author author = authorService.update(book.getAuthor(), bookRequestDto,book);
+        book.setAuthor(author);
+        book.setPrice(bookRequestDto.getPrice());
+        return repo.save(book);
+    }
+
+    @Override
+    public void deleteBook(String isbn13) {
+        Book book = repo.findByISBN13(isbn13);
+        if(book == null){
+            throw new IllegalArgumentException("Book with ISBN13 " + isbn13 + " does not exist.");
+        }
+        repo.delete(book);
+    }
+
+    @Override
+    public Book findById(Long id) {
+        return repo.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("Book with ID " + id + " does not exist."));
     }
 }

@@ -9,8 +9,10 @@ import java.util.Optional;
 public interface PublisherService {
     Publisher save(Publisher publisher);
     Publisher update(Publisher publisher);
+    Publisher update(Publisher publisher, BookRequestDto bookRequestDto);
     void delete(Publisher publisher);
     Optional<Publisher> findByPublisherName(String publisherName);
     Publisher createPublisher(BookRequestDto bookRequestDto);
     List<Publisher> findAll();
+    Publisher findById(Long id);
 }

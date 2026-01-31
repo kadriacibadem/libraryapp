@@ -2,6 +2,7 @@ package com.example.libraryapp.mapper;
 
 import com.example.libraryapp.dto.response.BookResponse;
 import com.example.libraryapp.dto.response.PublisherResponse;
+import com.example.libraryapp.entity.Author;
 import com.example.libraryapp.entity.Book;
 import com.example.libraryapp.entity.Publisher;
 
@@ -18,7 +19,8 @@ public class BookMapper {
                 book.getISBN13(),
                 publisher == null ? null : new PublisherResponse(
                         publisher.getPublisherName()
-                )
+                ),
+                book.getAuthor().getAuthorNameSurname()
         );
     }
 }
