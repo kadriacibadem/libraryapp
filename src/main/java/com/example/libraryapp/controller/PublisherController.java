@@ -1,7 +1,7 @@
 package com.example.libraryapp.controller;
 
 import com.example.libraryapp.dto.response.PublisherResponse;
-import com.example.libraryapp.mapper.PublisherMapper;
+import com.example.libraryapp.mapper.PublisherMapperStruct;
 import com.example.libraryapp.service.PublisherService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class PublisherController {
         try{
             return ResponseEntity.ok(
                     publisherService.findAll().stream()
-                            .map(PublisherMapper::toResponse)
+                            .map(PublisherMapperStruct.INSTANCE::toResponse)
                             .toList()
             );
         }catch (Exception e){

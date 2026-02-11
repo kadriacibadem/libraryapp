@@ -1,11 +1,12 @@
 package com.example.libraryapp.controller;
 
+import com.example.libraryapp.client.GoogleBooksClient;
 import com.example.libraryapp.client.response.BookSearchResponse;
 import com.example.libraryapp.client.service.GoogleBookService;
 import com.example.libraryapp.dto.request.BookRequestDto;
 import com.example.libraryapp.dto.response.BookResponse;
 import com.example.libraryapp.entity.Book;
-import com.example.libraryapp.mapper.BookMapper;
+import com.example.libraryapp.mapper.BookMapperStruct;
 import com.example.libraryapp.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ public class BookController {
     private static final Logger logger = LogManager.getLogger(BookController.class);
 
     private final BookService bookService;
-    private final GoogleBookService googleBookService;
+    private final GoogleBooksClient googleBooksClient;
 
     @Operation(
             summary = "Kitap oluşturma REST API",
@@ -37,7 +38,7 @@ public class BookController {
     public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookRequestDto bookRequestDto) {
         try{
             Book book = bookService.createBookFromDto(bookRequestDto);
-            BookResponse bookResponse = BookMapper.toResponse(book);
+            BookResponse bookResponse = BookMapperStruct.INSTANCE.toResponse(book);
             return ResponseEntity.ok(bookResponse);
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -53,7 +54,7 @@ public class BookController {
     public ResponseEntity<BookResponse> createBook(@PathVariable String title) {
         try{
             Book book = bookService.findByTitle(title);
-            BookResponse bookResponse = BookMapper.toResponse(book);
+            BookResponse bookResponse = BookMapperStruct.INSTANCE.toResponse(book);
             return ResponseEntity.ok(bookResponse);
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -69,7 +70,7 @@ public class BookController {
     public ResponseEntity<BookResponse> updateBook(@Valid @RequestBody BookRequestDto bookRequestDto) {
         try{
             Book updatedBook = bookService.updateBook(bookRequestDto);
-            BookResponse bookResponse = BookMapper.toResponse(updatedBook);
+            BookResponse bookResponse = BookMapperStruct.INSTANCE.toResponse(updatedBook);
             return ResponseEntity.ok(bookResponse);
         }catch (Exception e){
             logger.error(e.getMessage());
@@ -102,7 +103,7 @@ public class BookController {
             return ResponseEntity.ok(
                     bookService.findAll()
                             .stream()
-                            .map(BookMapper::toResponse)
+                            .map(BookMapperStruct.INSTANCE::toResponse)
                             .toList()
             );
         }catch (Exception e){
@@ -121,7 +122,7 @@ public class BookController {
             return ResponseEntity.ok(
                     bookService.findByBooksStartWithA()
                             .stream()
-                            .map(BookMapper::toResponse)
+                            .map(BookMapperStruct.INSTANCE::toResponse)
                             .toList()
             );
         }catch (Exception e){
@@ -137,9 +138,7 @@ public class BookController {
     @GetMapping("/search/{bookName}")
     public ResponseEntity<List<BookSearchResponse>> searchBook(@PathVariable String bookName) {
         try{
-            return ResponseEntity.ok(
-                    googleBookService.searchBooks(bookName)
-            );
+            return ResponseEntity.ok(googleBooksClient.searchBooks(bookName));
         }catch (Exception e){
             logger.error(e.getMessage());
             return ResponseEntity.badRequest().build();
